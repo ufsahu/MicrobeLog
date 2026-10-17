@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { PageHeader, Panel } from "@/components/AppShell";
 import { FilterBar } from "@/components/FilterBar";
 import { ResistanceTable } from "@/components/ResistanceTable";
-import { useDB, applyFilters, firstIsolates, defaultFilters, type Filters, fmtPct, pctZone, zoneClass, resistanceFor } from "@/lib/data";
+import { useDB, applyFilters, firstIsolates, defaultFilters, type Filters, pctZone, zoneClass, resistanceFor } from "@/lib/data";
 import { useLang, names } from "@/lib/i18n";
 import { seo } from "@/lib/seo";
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/resistance")({
 function ResistancePage() {
   const { data: db } = useDB();
   const { t, lang } = useLang();
-  const [f, setF] = useState<Filters>({ ...defaultFilters, org: 4, spec: 0 });
+  const [f, setF] = useState<Filters>({ ...defaultFilters, org: 2, spec: 0 });
   const [year, setYear] = useState<number | -1>(-1);
   const years = [2023, 2024, 2025, 2026];
   const data = useMemo(() => {
@@ -72,4 +72,4 @@ function ResistancePage() {
     </>
   );
 }
-export { fmtPct };
+

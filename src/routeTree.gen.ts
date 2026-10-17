@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
+import { Route as ResistanceRouteImport } from './routes/resistance'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResistanceRoute = ResistanceRouteImport.update({
+  id: '/resistance',
+  path: '/resistance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/monitoring': typeof MonitoringRoute
+  '/resistance': typeof ResistanceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/monitoring': typeof MonitoringRoute
+  '/resistance': typeof ResistanceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/monitoring': typeof MonitoringRoute
+  '/resistance': typeof ResistanceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/monitoring' | '/resistance'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/monitoring' | '/resistance'
+  id: '__root__' | '/' | '/monitoring' | '/resistance'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MonitoringRoute: typeof MonitoringRoute
+  ResistanceRoute: typeof ResistanceRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resistance': {
+      id: '/resistance'
+      path: '/resistance'
+      fullPath: '/resistance'
+      preLoaderRoute: typeof ResistanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MonitoringRoute: MonitoringRoute,
+  ResistanceRoute: ResistanceRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
