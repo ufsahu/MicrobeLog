@@ -1,13 +1,13 @@
 # MicrobeLog roadmap
-- [ ] Analyse uploads (README, CSVs, PDFs)
-- [ ] MicrobeLog logo + design system
-- [ ] Dashboard: overview, resistance (first isolate/patient/species/specimen/period, n>=30), sex split
-- [ ] Dataset explorer (cultures, isolates, susceptibility, patients) + patient detail
-- [ ] Quantity as % with red/yellow/green thresholds
-- [ ] Predictions for diseases/conditions
-- [ ] Microscopy image gallery + ImageJ-like analysis tools
-- [ ] Stats export (CSV + R script)
-- [ ] English/Finnish language toggle
-- [ ] Mobile app-style navigation (bottom tabs)
-- [ ] AI chat (EN/FI layman questions over datasets)
-- [ ] Monitoring tool: last 4 weeks + annual results with filters
+- [x] Analyse uploads (README, CSVs, PDFs)
+- [x] MicrobeLog logo + design system
+- [x] Dashboard: overview, resistance (first isolate/patient/species/specimen/period, n>=30), sex split
+- [x] Dataset explorer (cultures, isolates, susceptibility, patients) + patient detail
+- [x] Quantity as % with red/yellow/green thresholds
+- [x] Predictions for diseases/conditions
+- [x] Microscopy image gallery + ImageJ-like analysis tools
+- [x] Stats export (CSV + R script)
+- [x] English/Finnish language toggle
+- [x] Mobile app-style navigation (bottom tabs)
+- [x] AI chat (EN/FI layman questions over datasets)
+- [x] Monitoring tool: last 4 weeks + annual results with filters
