@@ -10,33 +10,180 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as ExplorerRouteImport } from './routes/explorer'
+import { Route as ExportRouteImport } from './routes/export'
+import { Route as MicroscopyRouteImport } from './routes/microscopy'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
+import { Route as PredictionsRouteImport } from './routes/predictions'
+import { Route as QuantityRouteImport } from './routes/quantity'
+import { Route as ResistanceRouteImport } from './routes/resistance'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as PatientsIndexRouteImport } from './routes/patients.index'
+import { Route as PatientsIdRouteImport } from './routes/patients.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExplorerRoute = ExplorerRouteImport.update({
+  id: '/explorer',
+  path: '/explorer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExportRoute = ExportRouteImport.update({
+  id: '/export',
+  path: '/export',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MicroscopyRoute = MicroscopyRouteImport.update({
+  id: '/microscopy',
+  path: '/microscopy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PredictionsRoute = PredictionsRouteImport.update({
+  id: '/predictions',
+  path: '/predictions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuantityRoute = QuantityRouteImport.update({
+  id: '/quantity',
+  path: '/quantity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResistanceRoute = ResistanceRouteImport.update({
+  id: '/resistance',
+  path: '/resistance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsIndexRoute = PatientsIndexRouteImport.update({
+  id: '/patients/',
+  path: '/patients/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsIdRoute = PatientsIdRouteImport.update({
+  id: '/patients/$id',
+  path: '/patients/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/explorer': typeof ExplorerRoute
+  '/export': typeof ExportRoute
+  '/microscopy': typeof MicroscopyRoute
+  '/monitoring': typeof MonitoringRoute
+  '/predictions': typeof PredictionsRoute
+  '/quantity': typeof QuantityRoute
+  '/resistance': typeof ResistanceRoute
+  '/api/chat': typeof ApiChatRoute
+  '/patients/$id': typeof PatientsIdRoute
+  '/patients/': typeof PatientsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/explorer': typeof ExplorerRoute
+  '/export': typeof ExportRoute
+  '/microscopy': typeof MicroscopyRoute
+  '/monitoring': typeof MonitoringRoute
+  '/predictions': typeof PredictionsRoute
+  '/quantity': typeof QuantityRoute
+  '/resistance': typeof ResistanceRoute
+  '/api/chat': typeof ApiChatRoute
+  '/patients/$id': typeof PatientsIdRoute
+  '/patients': typeof PatientsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
+  '/explorer': typeof ExplorerRoute
+  '/export': typeof ExportRoute
+  '/microscopy': typeof MicroscopyRoute
+  '/monitoring': typeof MonitoringRoute
+  '/predictions': typeof PredictionsRoute
+  '/quantity': typeof QuantityRoute
+  '/resistance': typeof ResistanceRoute
+  '/api/chat': typeof ApiChatRoute
+  '/patients/$id': typeof PatientsIdRoute
+  '/patients/': typeof PatientsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/chat'
+    | '/explorer'
+    | '/export'
+    | '/microscopy'
+    | '/monitoring'
+    | '/predictions'
+    | '/quantity'
+    | '/resistance'
+    | '/api/chat'
+    | '/patients/$id'
+    | '/patients/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/chat'
+    | '/explorer'
+    | '/export'
+    | '/microscopy'
+    | '/monitoring'
+    | '/predictions'
+    | '/quantity'
+    | '/resistance'
+    | '/api/chat'
+    | '/patients/$id'
+    | '/patients'
+  id:
+    | '__root__'
+    | '/'
+    | '/chat'
+    | '/explorer'
+    | '/export'
+    | '/microscopy'
+    | '/monitoring'
+    | '/predictions'
+    | '/quantity'
+    | '/resistance'
+    | '/api/chat'
+    | '/patients/$id'
+    | '/patients/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChatRoute: typeof ChatRoute
+  ExplorerRoute: typeof ExplorerRoute
+  ExportRoute: typeof ExportRoute
+  MicroscopyRoute: typeof MicroscopyRoute
+  MonitoringRoute: typeof MonitoringRoute
+  PredictionsRoute: typeof PredictionsRoute
+  QuantityRoute: typeof QuantityRoute
+  ResistanceRoute: typeof ResistanceRoute
+  ApiChatRoute: typeof ApiChatRoute
+  PatientsIdRoute: typeof PatientsIdRoute
+  PatientsIndexRoute: typeof PatientsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +195,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explorer': {
+      id: '/explorer'
+      path: '/explorer'
+      fullPath: '/explorer'
+      preLoaderRoute: typeof ExplorerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/export': {
+      id: '/export'
+      path: '/export'
+      fullPath: '/export'
+      preLoaderRoute: typeof ExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/microscopy': {
+      id: '/microscopy'
+      path: '/microscopy'
+      fullPath: '/microscopy'
+      preLoaderRoute: typeof MicroscopyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/predictions': {
+      id: '/predictions'
+      path: '/predictions'
+      fullPath: '/predictions'
+      preLoaderRoute: typeof PredictionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quantity': {
+      id: '/quantity'
+      path: '/quantity'
+      fullPath: '/quantity'
+      preLoaderRoute: typeof QuantityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resistance': {
+      id: '/resistance'
+      path: '/resistance'
+      fullPath: '/resistance'
+      preLoaderRoute: typeof ResistanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/': {
+      id: '/patients/'
+      path: '/patients'
+      fullPath: '/patients/'
+      preLoaderRoute: typeof PatientsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/$id': {
+      id: '/patients/$id'
+      path: '/patients/$id'
+      fullPath: '/patients/$id'
+      preLoaderRoute: typeof PatientsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChatRoute: ChatRoute,
+  ExplorerRoute: ExplorerRoute,
+  ExportRoute: ExportRoute,
+  MicroscopyRoute: MicroscopyRoute,
+  MonitoringRoute: MonitoringRoute,
+  PredictionsRoute: PredictionsRoute,
+  QuantityRoute: QuantityRoute,
+  ResistanceRoute: ResistanceRoute,
+  ApiChatRoute: ApiChatRoute,
+  PatientsIdRoute: PatientsIdRoute,
+  PatientsIndexRoute: PatientsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
