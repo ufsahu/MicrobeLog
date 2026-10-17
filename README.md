@@ -1,4 +1,5 @@
-#MicrobeLog
+**MicrobeLog**
+
 
 Antimicrobial resistance (AMR) is one of the most serious public threats globally for humans (Identified by the WHO, the UN & the World Economic Forum)
 
