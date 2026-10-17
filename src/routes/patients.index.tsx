@@ -112,7 +112,7 @@ function PatientList() {
 
   return (
     <>
-      <PageHeader title={t("patients")} sub={fi ? "Hae potilaita kaikkien CSV-sarakkeiden perusteella: patients, cultures, isolates, susceptibility ja antibiotics." : "Search patients by every CSV column: patients, cultures, isolates, susceptibility and antibiotics."} />
+      <PageHeader title={t("patients")} sub={fi ? "Hae potilaita: potilaat, näytteet, isolaatit, herkkyystiedot ja antibiootit." : "Search patients by: patients, cultures, isolates, susceptibility and antibiotics."} />
       <div className="mb-3 flex gap-2">
         <input value={f.q} onChange={(e) => up("q", e.target.value)} placeholder={fi ? "Potilas-, näyte- tai isolaattitunnus, mikrobi, alue…" : "Patient, culture or isolate ID, organism, area…"} className="h-10 flex-1 rounded-lg border border-input bg-card px-3 text-sm" />
         <button onClick={() => setOpen(!open)} className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-medium"><SlidersHorizontal className="h-4 w-4" />{fi ? "Suodattimet" : "Filters"}{active > 0 && <span className="rounded-full bg-accent px-1.5 text-xs text-accent-foreground">{active}</span>}</button>
@@ -120,7 +120,7 @@ function PatientList() {
 
       {open && (
         <div className="mb-4 space-y-4 rounded-xl border border-border bg-card p-4 shadow-card">
-          <Group title="patients.csv">
+          <Group title={fi ? "Potilaat" : "Patients"}>
             <Field label={t("sex")} col="sex"><select className={inputCls} value={f.sex} onChange={(e) => up("sex", e.target.value)}><option value="">{t("all")}</option><option value="F">{t("female")}</option><option value="M">{t("male")}</option></select></Field>
             <Field label={fi ? "Syntymävuosi alkaen" : "Born from"} col="birth_year"><input type="number" className={inputCls} value={f.birthMin} onChange={(e) => up("birthMin", e.target.value)} placeholder="1920" /></Field>
             <Field label={fi ? "Syntymävuosi asti" : "Born to"} col="birth_year"><input type="number" className={inputCls} value={f.birthMax} onChange={(e) => up("birthMax", e.target.value)} placeholder="2026" /></Field>
@@ -128,7 +128,7 @@ function PatientList() {
             <Field label={fi ? "Viljelyjä vähintään" : "Min. cultures"}><input type="number" min={1} className={inputCls} value={f.minCultures} onChange={(e) => up("minCultures", e.target.value)} /></Field>
             <Field label={t("risk")}><select className={inputCls} value={f.risk} onChange={(e) => up("risk", e.target.value)}><option value="">{t("all")}</option><option value="high">{t("high")}</option><option value="mid">{t("mid")}</option><option value="low">{t("low")}</option></select></Field>
           </Group>
-          <Group title="cultures.csv">
+          <Group title={fi ? "Näytteet" : "Cultures"}>
             <Field label={fi ? "Ikä alkaen" : "Age from"} col="age_years"><input type="number" className={inputCls} value={f.ageMin} onChange={(e) => up("ageMin", e.target.value)} /></Field>
             <Field label={fi ? "Ikä asti" : "Age to"} col="age_years"><input type="number" className={inputCls} value={f.ageMax} onChange={(e) => up("ageMax", e.target.value)} /></Field>
             <Field label={fi ? "Näytepäivä alkaen" : "Sample from"} col="sample_date"><input type="date" className={inputCls} value={f.dateFrom} onChange={(e) => up("dateFrom", e.target.value)} /></Field>
@@ -145,7 +145,7 @@ function PatientList() {
             <Field label={fi ? "Tulos" : "Result"} col="result"><select className={inputCls} value={f.result} onChange={(e) => up("result", e.target.value)}><option value="">{t("all")}</option>{db.meta.results.map((_, i) => <option key={i} value={i}>{n.result(i)}</option>)}</select></Field>
             <Field label={fi ? "Isolaatteja" : "Isolates"} col="n_isolates"><select className={inputCls} value={f.nIso} onChange={(e) => up("nIso", e.target.value)}><option value="">{t("all")}</option>{[0, 1, 2].map((x) => <option key={x}>{x}</option>)}</select></Field>
           </Group>
-          <Group title="isolates.csv">
+          <Group title={fi ? "Isolaatit" : "Isolates"}>
             <Field label={t("organism")} col="organism"><select className={inputCls} value={f.organism} onChange={(e) => up("organism", e.target.value)}><option value="">{t("all")}</option>{db.meta.organisms.map((o, i) => <option key={o} value={i}>{o}</option>)}</select></Field>
             <Field label={t("quantity")} col="quantity"><select className={inputCls} value={f.quantity} onChange={(e) => up("quantity", e.target.value)}><option value="">{t("all")}</option>{db.meta.quantities.map((q, i) => q && <option key={q} value={i}>{quantityLabel(q, 0)}</option>)}</select></Field>
             <Field label={t("phenotypes")} col="esbl · mrsa · vre · cpe">
@@ -153,7 +153,7 @@ function PatientList() {
                 <button key={k} onClick={() => up(k, !f[k])} className={`rounded-md border px-2 py-1 text-xs font-bold uppercase ${f[k] ? "border-destructive bg-destructive text-destructive-foreground" : "border-border text-foreground"}`}>{k}</button>))}</div>
             </Field>
           </Group>
-          <Group title="susceptibility.csv · antibiotics.csv">
+          <Group title={fi ? "Herkkyystiedot · antibiootit" : "Susceptibility · antibiotics"}>
             <Field label={t("antibiotic")} col="antibiotic / antibiotic_code / antibiotic_fi"><select className={inputCls} value={f.ab} onChange={(e) => up("ab", e.target.value)}><option value="">{t("all")}</option>{db.meta.antibiotics.map((a, i) => <option key={a.antibiotic_code} value={i}>{a.antibiotic_code} · {n.ab(i)} ({a.class}{a.reported_for === "urine" ? ", " + n.spec(0) : ""})</option>)}</select></Field>
             <Field label={fi ? "Herkkyystulos" : "S/R result"} col="result"><select className={inputCls} value={f.abRes} disabled={!f.ab} onChange={(e) => up("abRes", e.target.value)}><option value="">{fi ? "Testattu" : "Tested"}</option><option value="R">R · {t("resistant")}</option><option value="S">S · {t("susceptible")}</option></select></Field>
             <Field label={fi ? "Tulkintaohje" : "Guideline"} col="guideline"><select className={inputCls} value={f.guideline} onChange={(e) => up("guideline", e.target.value)}><option value="">{t("all")}</option>{db.meta.guidelines.map((g, i) => <option key={g} value={i}>{g}</option>)}</select></Field>
