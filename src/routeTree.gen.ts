@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as ExplorerRouteImport } from './routes/explorer'
 import { Route as ExportRouteImport } from './routes/export'
 import { Route as MicroscopyRouteImport } from './routes/microscopy'
@@ -17,12 +18,18 @@ import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as PredictionsRouteImport } from './routes/predictions'
 import { Route as QuantityRouteImport } from './routes/quantity'
 import { Route as ResistanceRouteImport } from './routes/resistance'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as PatientsIndexRouteImport } from './routes/patients.index'
 import { Route as PatientsIdRouteImport } from './routes/patients.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExplorerRoute = ExplorerRouteImport.update({
@@ -60,6 +67,11 @@ const ResistanceRoute = ResistanceRouteImport.update({
   path: '/resistance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientsIndexRoute = PatientsIndexRouteImport.update({
   id: '/patients/',
   path: '/patients/',
@@ -73,6 +85,7 @@ const PatientsIdRoute = PatientsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/explorer': typeof ExplorerRoute
   '/export': typeof ExportRoute
   '/microscopy': typeof MicroscopyRoute
@@ -80,11 +93,13 @@ export interface FileRoutesByFullPath {
   '/predictions': typeof PredictionsRoute
   '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
+  '/api/chat': typeof ApiChatRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients/': typeof PatientsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/explorer': typeof ExplorerRoute
   '/export': typeof ExportRoute
   '/microscopy': typeof MicroscopyRoute
@@ -92,12 +107,14 @@ export interface FileRoutesByTo {
   '/predictions': typeof PredictionsRoute
   '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
+  '/api/chat': typeof ApiChatRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients': typeof PatientsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/chat': typeof ChatRoute
   '/explorer': typeof ExplorerRoute
   '/export': typeof ExportRoute
   '/microscopy': typeof MicroscopyRoute
@@ -105,6 +122,7 @@ export interface FileRoutesById {
   '/predictions': typeof PredictionsRoute
   '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
+  '/api/chat': typeof ApiChatRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients/': typeof PatientsIndexRoute
 }
@@ -112,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/chat'
     | '/explorer'
     | '/export'
     | '/microscopy'
@@ -119,11 +138,13 @@ export interface FileRouteTypes {
     | '/predictions'
     | '/quantity'
     | '/resistance'
+    | '/api/chat'
     | '/patients/$id'
     | '/patients/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/chat'
     | '/explorer'
     | '/export'
     | '/microscopy'
@@ -131,11 +152,13 @@ export interface FileRouteTypes {
     | '/predictions'
     | '/quantity'
     | '/resistance'
+    | '/api/chat'
     | '/patients/$id'
     | '/patients'
   id:
     | '__root__'
     | '/'
+    | '/chat'
     | '/explorer'
     | '/export'
     | '/microscopy'
@@ -143,12 +166,14 @@ export interface FileRouteTypes {
     | '/predictions'
     | '/quantity'
     | '/resistance'
+    | '/api/chat'
     | '/patients/$id'
     | '/patients/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChatRoute: typeof ChatRoute
   ExplorerRoute: typeof ExplorerRoute
   ExportRoute: typeof ExportRoute
   MicroscopyRoute: typeof MicroscopyRoute
@@ -156,6 +181,7 @@ export interface RootRouteChildren {
   PredictionsRoute: typeof PredictionsRoute
   QuantityRoute: typeof QuantityRoute
   ResistanceRoute: typeof ResistanceRoute
+  ApiChatRoute: typeof ApiChatRoute
   PatientsIdRoute: typeof PatientsIdRoute
   PatientsIndexRoute: typeof PatientsIndexRoute
 }
@@ -167,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explorer': {
@@ -218,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResistanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patients/': {
       id: '/patients/'
       path: '/patients'
@@ -237,6 +277,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChatRoute: ChatRoute,
   ExplorerRoute: ExplorerRoute,
   ExportRoute: ExportRoute,
   MicroscopyRoute: MicroscopyRoute,
@@ -244,6 +285,7 @@ const rootRouteChildren: RootRouteChildren = {
   PredictionsRoute: PredictionsRoute,
   QuantityRoute: QuantityRoute,
   ResistanceRoute: ResistanceRoute,
+  ApiChatRoute: ApiChatRoute,
   PatientsIdRoute: PatientsIdRoute,
   PatientsIndexRoute: PatientsIndexRoute,
 }
