@@ -36,14 +36,11 @@ export const Route = createFileRoute("/api/chat")({
           else { try { msg = JSON.parse(txt)?.error?.message ?? msg; } catch { /* ignore */ } }
           return new Response(msg, { status: upstream.status });
         }
-        const reader = upstream.body.getReader();
         const dec = new TextDecoder(), enc = new TextEncoder();
         let buf = "";
-        const stream = new ReadableStream({
-          async pull(ctrl) {
-            const { done, value } = await reader.read();
-            if (done) { ctrl.close(); return; }
-            buf += dec.decode(value, { stream: true });
+        const stream = upstream.body.pipeThrough(new TransformStream<Uint8Array, Uint8Array>({
+          transform(chunk, ctrl) {
+            buf += dec.decode(chunk, { stream: true });
             const lines = buf.split("\n"); buf = lines.pop() ?? "";
             for (const l of lines) {
               if (!l.startsWith("data:")) continue;
@@ -51,8 +48,7 @@ export const Route = createFileRoute("/api/chat")({
               try { const ev = JSON.parse(data); if (ev.type === "response.output_text.delta" && ev.delta) ctrl.enqueue(enc.encode(ev.delta)); } catch { /* partial */ }
             }
           },
-          cancel() { reader.cancel(); },
-        });
+        }));
         const headers = new Headers({ "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-cache" });
         upstream.headers.forEach((v, k) => { if (k.toLowerCase().startsWith("x-lovable-aig-")) headers.set(k, v); });
         return new Response(stream, { headers });
