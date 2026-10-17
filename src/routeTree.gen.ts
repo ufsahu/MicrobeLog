@@ -11,7 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExplorerRouteImport } from './routes/explorer'
+import { Route as ExportRouteImport } from './routes/export'
+import { Route as MicroscopyRouteImport } from './routes/microscopy'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
+import { Route as PredictionsRouteImport } from './routes/predictions'
+import { Route as QuantityRouteImport } from './routes/quantity'
 import { Route as ResistanceRouteImport } from './routes/resistance'
 import { Route as PatientsIndexRouteImport } from './routes/patients.index'
 import { Route as PatientsIdRouteImport } from './routes/patients.$id'
@@ -26,9 +30,29 @@ const ExplorerRoute = ExplorerRouteImport.update({
   path: '/explorer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExportRoute = ExportRouteImport.update({
+  id: '/export',
+  path: '/export',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MicroscopyRoute = MicroscopyRouteImport.update({
+  id: '/microscopy',
+  path: '/microscopy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MonitoringRoute = MonitoringRouteImport.update({
   id: '/monitoring',
   path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PredictionsRoute = PredictionsRouteImport.update({
+  id: '/predictions',
+  path: '/predictions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuantityRoute = QuantityRouteImport.update({
+  id: '/quantity',
+  path: '/quantity',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResistanceRoute = ResistanceRouteImport.update({
@@ -50,7 +74,11 @@ const PatientsIdRoute = PatientsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/explorer': typeof ExplorerRoute
+  '/export': typeof ExportRoute
+  '/microscopy': typeof MicroscopyRoute
   '/monitoring': typeof MonitoringRoute
+  '/predictions': typeof PredictionsRoute
+  '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients/': typeof PatientsIndexRoute
@@ -58,7 +86,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/explorer': typeof ExplorerRoute
+  '/export': typeof ExportRoute
+  '/microscopy': typeof MicroscopyRoute
   '/monitoring': typeof MonitoringRoute
+  '/predictions': typeof PredictionsRoute
+  '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients': typeof PatientsIndexRoute
@@ -67,7 +99,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/explorer': typeof ExplorerRoute
+  '/export': typeof ExportRoute
+  '/microscopy': typeof MicroscopyRoute
   '/monitoring': typeof MonitoringRoute
+  '/predictions': typeof PredictionsRoute
+  '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients/': typeof PatientsIndexRoute
@@ -77,7 +113,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/explorer'
+    | '/export'
+    | '/microscopy'
     | '/monitoring'
+    | '/predictions'
+    | '/quantity'
     | '/resistance'
     | '/patients/$id'
     | '/patients/'
@@ -85,7 +125,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/explorer'
+    | '/export'
+    | '/microscopy'
     | '/monitoring'
+    | '/predictions'
+    | '/quantity'
     | '/resistance'
     | '/patients/$id'
     | '/patients'
@@ -93,7 +137,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/explorer'
+    | '/export'
+    | '/microscopy'
     | '/monitoring'
+    | '/predictions'
+    | '/quantity'
     | '/resistance'
     | '/patients/$id'
     | '/patients/'
@@ -102,7 +150,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExplorerRoute: typeof ExplorerRoute
+  ExportRoute: typeof ExportRoute
+  MicroscopyRoute: typeof MicroscopyRoute
   MonitoringRoute: typeof MonitoringRoute
+  PredictionsRoute: typeof PredictionsRoute
+  QuantityRoute: typeof QuantityRoute
   ResistanceRoute: typeof ResistanceRoute
   PatientsIdRoute: typeof PatientsIdRoute
   PatientsIndexRoute: typeof PatientsIndexRoute
@@ -124,11 +176,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExplorerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/export': {
+      id: '/export'
+      path: '/export'
+      fullPath: '/export'
+      preLoaderRoute: typeof ExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/microscopy': {
+      id: '/microscopy'
+      path: '/microscopy'
+      fullPath: '/microscopy'
+      preLoaderRoute: typeof MicroscopyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/monitoring': {
       id: '/monitoring'
       path: '/monitoring'
       fullPath: '/monitoring'
       preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/predictions': {
+      id: '/predictions'
+      path: '/predictions'
+      fullPath: '/predictions'
+      preLoaderRoute: typeof PredictionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quantity': {
+      id: '/quantity'
+      path: '/quantity'
+      fullPath: '/quantity'
+      preLoaderRoute: typeof QuantityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resistance': {
@@ -158,7 +238,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExplorerRoute: ExplorerRoute,
+  ExportRoute: ExportRoute,
+  MicroscopyRoute: MicroscopyRoute,
   MonitoringRoute: MonitoringRoute,
+  PredictionsRoute: PredictionsRoute,
+  QuantityRoute: QuantityRoute,
   ResistanceRoute: ResistanceRoute,
   PatientsIdRoute: PatientsIdRoute,
   PatientsIndexRoute: PatientsIndexRoute,

@@ -8,7 +8,7 @@ import { useLang } from "@/lib/i18n";
 import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/microscopy")({
-  validateSearch: (s: Record<string, unknown>) => ({ img: typeof s.img === "string" ? s.img : undefined }),
+  validateSearch: (s: Record<string, unknown>): { img?: string } => ({ img: typeof s.img === "string" ? s.img : undefined }),
   head: () => seo("Microscopy & image analysis", "Gram-stain sample images with built-in ImageJ-style filters, thresholding, particle counting and measurement."),
   component: Microscopy,
 });
