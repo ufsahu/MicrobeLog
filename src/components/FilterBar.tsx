@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { type DB, type Filters, defaultFilters } from "@/lib/data";
 import { names, useLang } from "@/lib/i18n";
 
@@ -18,7 +19,7 @@ export function FilterBar({ db, f, set, hide = [] }: { db: DB; f: Filters; set: 
   const n = names(db, lang);
   const all: [string, string] = ["-1", t("all")];
   const up = <K extends keyof Filters>(k: K, v: Filters[K]) => set({ ...f, [k]: v });
-  const items: [keyof Filters, JSX.Element][] = [
+  const items: [keyof Filters, ReactElement][] = [
     ["org", <Sel key="o" label={t("organism")} value={String(f.org)} onChange={(v) => up("org", +v)} opts={[all, ...db.meta.organisms.map((o, i) => [String(i), o] as [string, string])]} />],
     ["spec", <Sel key="s" label={t("specimen")} value={String(f.spec)} onChange={(v) => up("spec", +v)} opts={[all, ...db.meta.specimens.map((_, i) => [String(i), n.spec(i)] as [string, string])]} />],
     ["sex", <Sel key="x" label={t("sex")} value={f.sex} onChange={(v) => up("sex", v as Filters["sex"])} opts={[["all", t("all")], ["F", t("female")], ["M", t("male")]]} />],
