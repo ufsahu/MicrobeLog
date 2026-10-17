@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const key = process.env.LOVABLE_API_KEY;
+        const key = process.env["LOVABLE_API_KEY"];
         if (!key) return new Response("AI is not configured.", { status: 500 });
         let body: { messages: { role: "user" | "assistant"; content: string }[]; context: string };
         try { body = await request.json(); } catch { return new Response("Bad request", { status: 400 }); }
