@@ -17,7 +17,6 @@ export const Route = createFileRoute("/api/chat")({
         const msgs = (body.messages ?? []).slice(-12).map((m) => ({ role: m.role, content: String(m.content).slice(0, 4000) }));
         const upstream = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
           method: "POST",
-          signal: request.signal,
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}`, "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "fetch" },
           body: JSON.stringify({
             model: "openai/gpt-6-astra",
