@@ -1,0 +1,13 @@
+# MicrobeLog roadmap
+- [ ] Analyse uploads (README, CSVs, PDFs)
+- [ ] MicrobeLog logo + design system
+- [ ] Dashboard: overview, resistance (first isolate/patient/species/specimen/period, n>=30), sex split
+- [ ] Dataset explorer (cultures, isolates, susceptibility, patients) + patient detail
+- [ ] Quantity as % with red/yellow/green thresholds
+- [ ] Predictions for diseases/conditions
+- [ ] Microscopy image gallery + ImageJ-like analysis tools
+- [ ] Stats export (CSV + R script)
+- [ ] English/Finnish language toggle
+- [ ] Mobile app-style navigation (bottom tabs)
+- [ ] AI chat (EN/FI layman questions over datasets)
+- [ ] Monitoring tool: last 4 weeks + annual results with filters
