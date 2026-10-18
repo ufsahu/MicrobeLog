@@ -13,6 +13,8 @@ We have also added an AI ask and Microscopy feature, so that any questions can b
 
 The data can also be exported for statistical analysis purposes. 
 
+The product is made with Lovable
+
 
 
 
