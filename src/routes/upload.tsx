@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState, type ReactNode } from "react";
-import { ChevronRight, FileUp, Trash2, UploadCloud } from "lucide-react";
+import { ChevronRight, FileUp, PenLine, Trash2, UploadCloud } from "lucide-react";
 import { PageHeader, Panel } from "@/components/AppShell";
 import { useDB, bumpUploadRev, zoneClass, quantityLabel, toCSV, downloadText, type RawDB } from "@/lib/data";
 import { patientRisk } from "@/lib/clinical";
@@ -124,6 +124,8 @@ function UploadPage() {
           </div>
         )}
       </Panel>
+
+      <ManualEntry db={db} fi={fi} store={store} onSave={(next, note) => apply(next, note)} />
 
       {upDB ? <UploadedSearch db={upDB} fi={fi} /> : (
         <Panel className="text-center text-sm text-muted-foreground">
