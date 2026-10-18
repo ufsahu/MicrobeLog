@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState, type ReactNode } from "react";
-import { ChevronRight, FileUp, Trash2, UploadCloud } from "lucide-react";
+import { ChevronRight, FileUp, PenLine, Trash2, UploadCloud } from "lucide-react";
 import { PageHeader, Panel } from "@/components/AppShell";
 import { useDB, bumpUploadRev, zoneClass, quantityLabel, toCSV, downloadText, type RawDB } from "@/lib/data";
 import { patientRisk } from "@/lib/clinical";
@@ -124,6 +124,8 @@ function UploadPage() {
           </div>
         )}
       </Panel>
+
+      <ManualEntry db={db} fi={fi} store={store} onSave={(next, note) => apply(next, note)} />
 
       {upDB ? <UploadedSearch db={upDB} fi={fi} /> : (
         <Panel className="text-center text-sm text-muted-foreground">
@@ -313,5 +315,106 @@ function UploadedSearch({ db, fi }: { db: ReturnType<typeof buildLite>; fi: bool
       </div>
       {res.length > limit && <button onClick={() => setLimit(limit + 50)} className="mt-3 w-full rounded-lg border border-border bg-card py-2 text-sm font-medium">{fi ? "Näytä lisää" : "Show more"} ({res.length - limit})</button>}
     </>
+  );
+}
+
+/** Manual entry: type one linked record (patient + culture + isolate + S/R) without a CSV. */
+function ManualEntry({ db, fi, store, onSave }: { db: NonNullable<ReturnType<typeof useDB>["data"]>; fi: boolean; store: UploadStore; onSave: (next: UploadStore, note: string) => void }) {
+  const { t, lang } = useLang();
+  const n = names(db as never, lang);
+  const [open, setOpen] = useState(false);
+  const stamp = () => Date.now().toString(36).toUpperCase();
+  const blank = () => ({
+    pid: "", sex: "F", birth: "", area: db.meta.areas[0] ?? "",
+    cid: "", age: "", date: "", ward: "0", adm: "", spec: "0", result: "0", nIso: "1",
+    iid: "", ino: "1", org: "0", qty: "0", esbl: false, mrsa: false, vre: false, cpe: false,
+    guide: "0", sus: {} as Record<number, "S" | "R" | "">,
+  });
+  const [m, setM] = useState(blank);
+  const up = <K extends keyof ReturnType<typeof blank>>(k: K, v: ReturnType<typeof blank>[K]) => setM((p) => ({ ...p, [k]: v }));
+
+  const isoWeek = (d: string) => {
+    const dt = new Date(d + "T00:00:00Z");
+    const day = (dt.getUTCDay() + 6) % 7;
+    dt.setUTCDate(dt.getUTCDate() - day + 3);
+    const firstThu = new Date(Date.UTC(dt.getUTCFullYear(), 0, 4));
+    return 1 + Math.round(((dt.getTime() - firstThu.getTime()) / 86400000 - 3 + ((firstThu.getUTCDay() + 6) % 7)) / 7);
+  };
+
+  const save = () => {
+    const s = stamp();
+    const pid = m.pid.trim() || `P-UP-${s}`;
+    const cid = m.cid.trim() || `C-UP-${s}`;
+    const iid = m.iid.trim() || `I-UP-${s}`;
+    const date = m.date || new Date().toISOString().slice(0, 10);
+    const ward = db.meta.wards[+m.ward];
+    const specFi = db.meta.specimens_fi[+m.spec] ?? db.meta.specimens[+m.spec];
+    const resultName = db.meta.results[+m.result];
+    const orgName = db.meta.organisms[+m.org];
+    const qtyName = db.meta.quantities[+m.qty];
+    const guideName = db.meta.guidelines[+m.guide];
+    const next: UploadStore = { ...store,
+      patients: [...(store.patients ?? []), [pid, m.sex, m.birth || "1970", m.area]],
+      cultures: [...(store.cultures ?? []), [cid, pid, m.age || "0", date, date.slice(0, 4), String(isoWeek(date)), ward.ward_code, ward.ward_fi, ward.ward_en, ward.ward_type, ward.institution, m.adm, db.meta.specimens[+m.spec], specFi, resultName, m.nIso || "1"]],
+      isolates: [...(store.isolates ?? []), [iid, cid, m.ino || "1", orgName, qtyName, m.esbl ? "1" : "0", m.mrsa ? "1" : "0", m.vre ? "1" : "0", m.cpe ? "1" : "0"]],
+      susceptibility: [...(store.susceptibility ?? []), ...db.meta.antibiotics.flatMap((a, i) => m.sus[i] ? [[iid, cid, orgName, a.antibiotic, a.antibiotic_code, a.antibiotic_fi, m.sus[i], guideName]] : [])],
+    };
+    onSave(next, fi ? `Tallennettu ${pid} / ${cid} / ${iid}.` : `Saved ${pid} / ${cid} / ${iid}.`);
+    setM(blank());
+  };
+
+  const cycle = (i: number) => setM((p) => ({ ...p, sus: { ...p.sus, [i]: p.sus[i] === "S" ? "R" : p.sus[i] === "R" ? "" : "S" } }));
+
+  return (
+    <Panel className="mb-4" title={fi ? "Syötä tiedot käsin" : "Manual data entry"} right={
+      <button onClick={() => setOpen(!open)} className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted">
+        <PenLine className="h-3.5 w-3.5" />{open ? (fi ? "Sulje" : "Close") : (fi ? "Avaa lomake" : "Open form")}
+      </button>}>
+      {!open ? <p className="text-sm text-muted-foreground">{fi ? "Kirjaa yksittäinen potilas, näyte, isolaatti ja herkkyystulokset lomakkeella — samat kentät kuin Potilaat-välilehden tiedoissa." : "Record a single patient, culture, isolate and susceptibility results on a form — the same fields as in the Patients tab."}</p> : (
+      <div className="space-y-4">
+        <Group title={fi ? "Potilas" : "Patient"}>
+          <Field label="patient_id"><input className={inputCls} value={m.pid} onChange={(e) => up("pid", e.target.value)} placeholder={fi ? "automaattinen" : "auto"} /></Field>
+          <Field label={t("sex")} col="sex"><select className={inputCls} value={m.sex} onChange={(e) => up("sex", e.target.value)}><option value="F">{t("female")}</option><option value="M">{t("male")}</option></select></Field>
+          <Field label={fi ? "Syntymävuosi" : "Birth year"} col="birth_year"><input type="number" className={inputCls} value={m.birth} onChange={(e) => up("birth", e.target.value)} placeholder="1970" /></Field>
+          <Field label={t("area")} col="home_area"><input list="up-areas" className={inputCls} value={m.area} onChange={(e) => up("area", e.target.value)} /><datalist id="up-areas">{db.meta.areas.map((a) => <option key={a} value={a} />)}</datalist></Field>
+        </Group>
+        <Group title={fi ? "Näyte" : "Culture"}>
+          <Field label="culture_id"><input className={inputCls} value={m.cid} onChange={(e) => up("cid", e.target.value)} placeholder={fi ? "automaattinen" : "auto"} /></Field>
+          <Field label={fi ? "Ikä" : "Age"} col="age_years"><input type="number" className={inputCls} value={m.age} onChange={(e) => up("age", e.target.value)} /></Field>
+          <Field label={fi ? "Näytepäivä" : "Sample date"} col="sample_date · iso_year · iso_week"><input type="date" className={inputCls} value={m.date} onChange={(e) => up("date", e.target.value)} /></Field>
+          <Field label={t("ward")} col="ward_code · ward_type · institution"><select className={inputCls} value={m.ward} onChange={(e) => up("ward", e.target.value)}>{db.meta.wards.map((w, i) => <option key={w.ward_code} value={i}>{w.ward_code} · {n.ward(i)}</option>)}</select></Field>
+          <Field label={fi ? "Sisäänotto pvm" : "Admission date"} col="admission_date"><input type="date" className={inputCls} value={m.adm} onChange={(e) => up("adm", e.target.value)} /></Field>
+          <Field label={t("specimen")} col="specimen / specimen_fi"><select className={inputCls} value={m.spec} onChange={(e) => up("spec", e.target.value)}>{db.meta.specimens.map((_, i) => <option key={i} value={i}>{n.spec(i)}</option>)}</select></Field>
+          <Field label={fi ? "Tulos" : "Result"} col="result"><select className={inputCls} value={m.result} onChange={(e) => up("result", e.target.value)}>{db.meta.results.map((_, i) => <option key={i} value={i}>{n.result(i)}</option>)}</select></Field>
+          <Field label={fi ? "Isolaatteja" : "Isolates"} col="n_isolates"><input type="number" min={0} className={inputCls} value={m.nIso} onChange={(e) => up("nIso", e.target.value)} /></Field>
+        </Group>
+        <Group title={fi ? "Isolaatti" : "Isolate"}>
+          <Field label="isolate_id"><input className={inputCls} value={m.iid} onChange={(e) => up("iid", e.target.value)} placeholder={fi ? "automaattinen" : "auto"} /></Field>
+          <Field label={fi ? "Järjestysnro" : "Isolate no."} col="isolate_no"><input type="number" min={1} className={inputCls} value={m.ino} onChange={(e) => up("ino", e.target.value)} /></Field>
+          <Field label={t("organism")} col="organism"><select className={inputCls} value={m.org} onChange={(e) => up("org", e.target.value)}>{db.meta.organisms.map((o, i) => <option key={o} value={i}>{o}</option>)}</select></Field>
+          <Field label={t("quantity")} col="quantity"><select className={inputCls} value={m.qty} onChange={(e) => up("qty", e.target.value)}>{db.meta.quantities.map((q, i) => q && <option key={q} value={i}>{quantityLabel(q, +m.spec)}</option>)}</select></Field>
+          <Field label={t("phenotypes")} col="esbl · mrsa · vre · cpe">
+            <div className="flex h-9 flex-wrap items-center gap-1">{(["esbl", "mrsa", "vre", "cpe"] as const).map((k) => (
+              <button key={k} onClick={() => up(k, !m[k])} className={`rounded-md border px-2 py-1 text-xs font-bold uppercase ${m[k] ? "border-destructive bg-destructive text-destructive-foreground" : "border-border text-foreground"}`}>{k}</button>))}</div>
+          </Field>
+        </Group>
+        <div>
+          <div className="mb-2 font-mono text-xs font-semibold text-primary">{fi ? "Herkkyystiedot · antibiootit" : "Susceptibility · antibiotics"}</div>
+          <div className="mb-2 max-w-xs"><Field label={fi ? "Tulkintaohje" : "Guideline"} col="guideline"><select className={inputCls} value={m.guide} onChange={(e) => up("guide", e.target.value)}>{db.meta.guidelines.map((g, i) => <option key={g} value={i}>{g}</option>)}</select></Field></div>
+          <div className="flex flex-wrap gap-1.5">
+            {db.meta.antibiotics.map((a, i) => (
+              <button key={a.antibiotic_code} onClick={() => cycle(i)} title={`${n.ab(i)} (${a.class})`}
+                className={`rounded-md border px-2 py-1 text-xs font-semibold ${m.sus[i] === "R" ? "border-destructive bg-destructive text-destructive-foreground" : m.sus[i] === "S" ? "border-emerald-600 bg-emerald-600 text-white" : "border-border text-muted-foreground"}`}>
+                {a.antibiotic_code}{m.sus[i] ? ` · ${m.sus[i]}` : ""}
+              </button>))}
+          </div>
+          <p className="mt-1 text-[11px] text-muted-foreground">{fi ? "Napauta antibioottia: ei testattu → S → R. S = herkkä, R = resistentti." : "Tap an antibiotic: not tested → S → R. S = susceptible, R = resistant."}</p>
+        </div>
+        <div className="flex justify-end gap-2">
+          <button onClick={() => setM(blank())} className="rounded-lg border border-border px-4 py-1.5 text-sm text-muted-foreground hover:bg-muted">{t("reset")}</button>
+          <button onClick={save} className="rounded-lg bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground hover:opacity-90">{fi ? "Tallenna tietue" : "Save record"}</button>
+        </div>
+      </div>)}
+    </Panel>
   );
 }
