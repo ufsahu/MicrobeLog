@@ -366,7 +366,7 @@ function ManualEntry({ db, fi, store, onSave }: { db: NonNullable<ReturnType<typ
   const cycle = (i: number) => setM((p) => ({ ...p, sus: { ...p.sus, [i]: p.sus[i] === "S" ? "R" : p.sus[i] === "R" ? "" : "S" } }));
 
   return (
-    <Panel className="mb-4" title={fi ? "Syötä tiedot käsin" : "Manual data entry"} action={
+    <Panel className="mb-4" title={fi ? "Syötä tiedot käsin" : "Manual data entry"} right={
       <button onClick={() => setOpen(!open)} className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted">
         <PenLine className="h-3.5 w-3.5" />{open ? (fi ? "Sulje" : "Close") : (fi ? "Avaa lomake" : "Open form")}
       </button>}>
