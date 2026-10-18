@@ -74,10 +74,10 @@ export function mergeUploads(raw: RawDB, up: UploadStore): RawDB | null {
   const idx = <T>(arr: T[], v: T): number => { let i = arr.indexOf(v); if (i === -1) { arr.push(v); i = arr.length - 1; } return i; };
   const out: RawDB = {
     meta,
-    patients: raw.patients.map((p) => [...p] as RawDB["patients"][number]),
-    cultures: raw.cultures.map((c) => [...c] as RawDB["cultures"][number]),
-    isolates: raw.isolates.map((i) => [...i] as RawDB["isolates"][number]),
-    susceptibility: raw.susceptibility.map((s) => [...s] as RawDB["susceptibility"][number]),
+    patients: raw.patients.map((p): RawDB["patients"][number] => [p[0], p[1], p[2], p[3]]),
+    cultures: raw.cultures.map((c): RawDB["cultures"][number] => [c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9], c[10]]),
+    isolates: raw.isolates.map((i): RawDB["isolates"][number] => [i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7]]),
+    susceptibility: raw.susceptibility.map((s): RawDB["susceptibility"][number] => [s[0], s[1], s[2], s[3]]),
   };
   const errors: string[] = [];
 
