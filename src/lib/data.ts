@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { loadUploads, mergeUploads, totalUploads } from "./upload";
 
 export type Ward = { ward_code: string; ward_fi: string; ward_en: string; ward_type: "in" | "out"; institution: string };
 export type Antibiotic = { antibiotic: string; antibiotic_code: string; antibiotic_fi: string; class: string; reported_for: string };
@@ -6,11 +7,12 @@ export type Meta = {
   areas: string[]; organisms: string[]; specimens: string[]; specimens_fi: string[]; results: string[];
   quantities: string[]; guidelines: string[]; wards: Ward[]; antibiotics: Antibiotic[];
 };
-type RawDB = {
+export type RawDB = {
   meta: Meta;
   patients: [string, "F" | "M", number, number][];
   cultures: [string, number, number, string, number, number, number, string, number, number, number][];
   isolates: [string, number, number, number, number, number, string, number][];
+  susceptibility: [number, string, string, number][]; // [isolate_idx, antibiotic_code, S/R, guideline_idx]
 };
 
 export type Patient = { idx: number; id: string; sex: "F" | "M"; birth: number; area: string };
@@ -51,16 +53,34 @@ function build(raw: RawDB): DB {
       p: cu.p, sex: patients[cu.p].sex, age: cu.age, date: cu.date, t: cu.t, year: cu.year, week: cu.week, ward: cu.ward, spec: cu.spec, hai: cu.hai,
     };
   });
+  // Bake susceptibility tuples (by isolate index + antibiotic code) into isolate sus strings.
+  for (const [ii, code, res, g] of raw.susceptibility) {
+    const a = raw.meta.antibiotics.findIndex((x) => x.antibiotic_code === code);
+    if (a === -1 || !isolates[ii]) continue;
+    const chars = isolates[ii].sus.split("");
+    while (chars.length < raw.meta.antibiotics.length) chars.push(".");
+    chars[a] = res;
+    isolates[ii].sus = chars.join("");
+    if (isolates[ii].guide === -1) isolates[ii].guide = g;
+  }
   return { meta: raw.meta, patients, cultures, isolates, maxT, minT, culturesByPatient, isolatesByCulture };
 }
 
+/** Bumped whenever uploads change, so useDB refetches and re-merges. */
+export let uploadRev = 0;
+export function bumpUploadRev() { uploadRev++; }
+
 export function useDB() {
   return useQuery({
-    queryKey: ["microbelog-db"],
+    queryKey: ["microbelog-db", uploadRev],
     queryFn: async () => {
       const r = await fetch("/data/db.json");
       if (!r.ok) throw new Error("Failed to load data");
-      return build(await r.json());
+      let raw: RawDB = await r.json();
+      if (!raw.susceptibility) raw.susceptibility = [];
+      const up = loadUploads();
+      if (totalUploads(up)) raw = mergeUploads(raw, up) ?? raw;
+      return build(raw);
     },
     staleTime: Infinity,
     // Re-check for new data every 15 minutes so monitoring stays current

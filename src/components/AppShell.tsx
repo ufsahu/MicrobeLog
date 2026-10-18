@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Activity, BarChart3, Bot, Database, Download, FlaskConical, LayoutDashboard, Microscope, MoreHorizontal, Radar, TrendingUp, Users } from "lucide-react";
+import { Activity, BarChart3, Bot, Database, Download, FlaskConical, LayoutDashboard, Microscope, MoreHorizontal, Radar, TrendingUp, Upload, Users } from "lucide-react";
 import logo from "@/assets/microbelog-logo.png";
 import { useLang, type Key } from "@/lib/i18n";
 import { useDB } from "@/lib/data";
@@ -12,6 +12,7 @@ const nav: { to: string; key: Key; icon: typeof Activity }[] = [
   { to: "/monitoring", key: "monitoring", icon: Radar },
   { to: "/explorer", key: "explorer", icon: Database },
   { to: "/patients", key: "patients", icon: Users },
+  { to: "/upload", key: "upload", icon: Upload },
   { to: "/quantity", key: "quantity", icon: FlaskConical },
   { to: "/predictions", key: "predictions", icon: TrendingUp },
   { to: "/microscopy", key: "microscopy", icon: Microscope },
