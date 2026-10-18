@@ -14,6 +14,7 @@ const dict = {
   microscopy: ["Microscopy", "Mikroskopia"],
   export: ["Export & R", "Vienti & R"],
   chat: ["Ask AI", "Kysy tekoälyltä"],
+  upload: ["Upload New Data", "Lataa uusia tietoja"],
   more: ["More", "Lisää"],
   loading: ["Loading surveillance data…", "Ladataan seuranta-aineistoa…"],
   synthetic: ["All data is synthetic — no real patients.", "Kaikki tiedot ovat keksittyjä — ei todellisia potilaita."],
