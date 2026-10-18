@@ -18,6 +18,7 @@ import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as PredictionsRouteImport } from './routes/predictions'
 import { Route as QuantityRouteImport } from './routes/quantity'
 import { Route as ResistanceRouteImport } from './routes/resistance'
+import { Route as UploadRouteImport } from './routes/upload'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as PatientsIndexRouteImport } from './routes/patients.index'
 import { Route as PatientsIdRouteImport } from './routes/patients.$id'
@@ -67,6 +68,11 @@ const ResistanceRoute = ResistanceRouteImport.update({
   path: '/resistance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UploadRoute = UploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/predictions': typeof PredictionsRoute
   '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
+  '/upload': typeof UploadRoute
   '/api/chat': typeof ApiChatRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients/': typeof PatientsIndexRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/predictions': typeof PredictionsRoute
   '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
+  '/upload': typeof UploadRoute
   '/api/chat': typeof ApiChatRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients': typeof PatientsIndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/predictions': typeof PredictionsRoute
   '/quantity': typeof QuantityRoute
   '/resistance': typeof ResistanceRoute
+  '/upload': typeof UploadRoute
   '/api/chat': typeof ApiChatRoute
   '/patients/$id': typeof PatientsIdRoute
   '/patients/': typeof PatientsIndexRoute
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/predictions'
     | '/quantity'
     | '/resistance'
+    | '/upload'
     | '/api/chat'
     | '/patients/$id'
     | '/patients/'
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/predictions'
     | '/quantity'
     | '/resistance'
+    | '/upload'
     | '/api/chat'
     | '/patients/$id'
     | '/patients'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/predictions'
     | '/quantity'
     | '/resistance'
+    | '/upload'
     | '/api/chat'
     | '/patients/$id'
     | '/patients/'
@@ -181,6 +193,7 @@ export interface RootRouteChildren {
   PredictionsRoute: typeof PredictionsRoute
   QuantityRoute: typeof QuantityRoute
   ResistanceRoute: typeof ResistanceRoute
+  UploadRoute: typeof UploadRoute
   ApiChatRoute: typeof ApiChatRoute
   PatientsIdRoute: typeof PatientsIdRoute
   PatientsIndexRoute: typeof PatientsIndexRoute
@@ -251,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResistanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/upload': {
+      id: '/upload'
+      path: '/upload'
+      fullPath: '/upload'
+      preLoaderRoute: typeof UploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -285,6 +305,7 @@ const rootRouteChildren: RootRouteChildren = {
   PredictionsRoute: PredictionsRoute,
   QuantityRoute: QuantityRoute,
   ResistanceRoute: ResistanceRoute,
+  UploadRoute: UploadRoute,
   ApiChatRoute: ApiChatRoute,
   PatientsIdRoute: PatientsIdRoute,
   PatientsIndexRoute: PatientsIndexRoute,
