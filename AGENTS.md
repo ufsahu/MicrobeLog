@@ -16,3 +16,4 @@
 - AI chat: client builds a data-summary context; src/routes/api/chat.ts streams from the AI gateway Responses API as plain text.
 - UI strings live in src/lib/i18n.tsx (EN/FI); dataset names use the CSVs' own _fi/_en columns.
 - User-uploaded CSVs are parsed in the browser (src/lib/upload.ts), stored as raw rows in localStorage ("microbelog-upload"), and merged into db.json data inside useDB's queryFn; uploadRev in src/lib/data.ts busts the query cache on change.
+- Demo login (src/lib/auth.tsx, localStorage "microbelog-session") is gated in AppShell; patient role renders only PatientView for their own ID (verified by patient ID + matching culture ID) — no real auth, demo only.

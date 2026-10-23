@@ -1,9 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Activity, BarChart3, Bot, Database, Download, FlaskConical, LayoutDashboard, Microscope, MoreHorizontal, Radar, TrendingUp, Upload, Users } from "lucide-react";
+import { Activity, BarChart3, Bot, Database, Download, FlaskConical, LayoutDashboard, LogOut, Microscope, MoreHorizontal, Radar, TrendingUp, Upload, Users } from "lucide-react";
 import logo from "@/assets/microbelog-logo.png";
 import { useLang, type Key } from "@/lib/i18n";
 import { useDB } from "@/lib/data";
+import { useAuth } from "@/lib/auth";
+import { LoginScreen } from "@/components/LoginScreen";
+import { PatientView } from "@/components/PatientView";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
 const nav: { to: string; key: Key; icon: typeof Activity }[] = [
@@ -38,9 +41,47 @@ export function LangToggle({ compact }: { compact?: boolean }) {
 function isActive(path: string, to: string) { return to === "/" ? path === "/" : path.startsWith(to); }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { t } = useLang();
+  const { session, ready, logout } = useAuth();
+  if (!ready) return <div className="min-h-screen" />;
+  if (!session) return <LoginScreen />;
+  if (session.role === "patient") return <PatientShell id={session.patientId!} onLogout={logout} />;
+  return <StaffShell role={session.role} user={session.user} onLogout={logout}>{children}</StaffShell>;
+}
+
+function UserBadge({ label, onLogout }: { label: string; onLogout: () => void }) {
+  const { lang } = useLang();
+  return (
+    <div className="flex items-center gap-2 text-xs">
+      <span className="hidden rounded-full bg-secondary px-3 py-1 font-semibold text-secondary-foreground sm:inline">{label}</span>
+      <button onClick={onLogout} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1 font-semibold hover:text-primary">
+        <LogOut className="h-3.5 w-3.5" />{lang === "fi" ? "Kirjaudu ulos" : "Log out"}
+      </button>
+    </div>
+  );
+}
+
+function PatientShell({ id, onLogout }: { id: string; onLogout: () => void }) {
+  const { lang } = useLang();
+  const { isLoading } = useDB();
+  return (
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-border bg-card/95 px-4 py-2 backdrop-blur">
+        <img src={logo} alt="MicrobeLog" width={1536} height={512} className="h-8 w-auto" />
+        <div className="flex items-center gap-2"><LangToggle compact /><UserBadge label={`${lang === "fi" ? "Potilas" : "Patient"} ${id}`} onLogout={onLogout} /></div>
+      </header>
+      <div className="mx-auto max-w-5xl px-4 py-4">
+        <p className="mb-3 rounded-lg bg-secondary px-3 py-2 text-xs text-secondary-foreground">{lang === "fi" ? "Turvallisuussyistä näet vain omat tietosi." : "For your security, you can only see your own results."}</p>
+        {isLoading ? <div className="py-20 text-center text-muted-foreground"><Activity className="mx-auto h-8 w-8 animate-pulse text-primary" /></div> : <PatientView id={id} patientMode />}
+      </div>
+    </div>
+  );
+}
+
+function StaffShell({ children, role, user, onLogout }: { children: ReactNode; role: "doctor" | "rnd"; user: string; onLogout: () => void }) {
+  const { t, lang } = useLang();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { data: db, isLoading, error } = useDB();
+  const roleLabel = role === "doctor" ? (lang === "fi" ? "Lääkäri" : "Doctor") : (lang === "fi" ? "T&K" : "R&D");
 
   return (
     <div className="min-h-screen">
@@ -60,13 +101,14 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile top bar */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card/95 px-4 py-2 backdrop-blur lg:hidden">
         <img src={logo} alt="MicrobeLog" width={1536} height={512} className="h-8 w-auto" />
-        <LangToggle compact />
+        <div className="flex items-center gap-2"><LangToggle compact /><UserBadge label={`${roleLabel} · ${user}`} onLogout={onLogout} /></div>
       </header>
 
       <main className="pb-24 lg:pb-8 lg:pl-60">
         <div className="hidden items-center justify-end gap-3 px-8 pt-5 lg:flex">
           {db && <span className="text-xs text-muted-foreground">{t("updated")} {new Date(db.maxT).toISOString().slice(0, 10)}</span>}
           <LangToggle />
+          <UserBadge label={`${roleLabel} · ${user}`} onLogout={onLogout} />
         </div>
         <div className="mx-auto max-w-7xl px-4 py-4 lg:px-8">
           {isLoading ? (
