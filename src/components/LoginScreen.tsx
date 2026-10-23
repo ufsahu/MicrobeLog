@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FlaskConical, Stethoscope, User, Lock } from "lucide-react";
+import { FlaskConical, Stethoscope, User, Lock, Search } from "lucide-react";
 import logo from "@/assets/microbelog-logo.png";
 import { useAuth, type Role } from "@/lib/auth";
 import { useDB } from "@/lib/data";
