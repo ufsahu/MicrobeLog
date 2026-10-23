@@ -4,7 +4,6 @@ import { PageHeader, Panel, Stat } from "@/components/AppShell";
 import { useDB, quantityZone, quantityLabel, zoneClass } from "@/lib/data";
 import { patientRisk, predictCondition, condText } from "@/lib/clinical";
 import { useLang, names } from "@/lib/i18n";
-import { seo } from "@/lib/seo";
 import { imageForOrganism } from "@/lib/micro-images";
 
 
