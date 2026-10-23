@@ -22,6 +22,15 @@ export function LoginScreen() {
   const [pid, setPid] = useState<string | null>(null);
   const [cid, setCid] = useState<string | null>(null);
   const [err, setErr] = useState("");
+  const [pw, setPw] = useState("");
+  const [open, setOpen] = useState(false);
+  const q = (pid ?? "").trim().toUpperCase();
+  const suggestions = db && q ? db.patients.filter((x) => x.id.toUpperCase().includes(q)).slice(0, 8) : [];
+  const pick = (id: string) => {
+    setPid(id); setOpen(false);
+    const c = db?.cultures.find((x) => db.patients[x.p]?.id === id);
+    if (c) setCid(c.id);
+  };
   const r = roles.find((x) => x.role === tab)!;
   const fi = lang === "fi";
 
@@ -29,7 +38,8 @@ export function LoginScreen() {
     e.preventDefault(); setErr("");
     if (tab !== "patient") return login({ role: tab, user: r.user });
     if (!db) return;
-    const p = (pid ?? firstP).trim(), c = (cid ?? firstC).trim();
+    if (!pw.trim()) { setErr(fi ? "Kirjoita salasana." : "Please type a password."); return; }
+    const p = (pid ?? firstP).trim().toUpperCase(), c = (cid ?? firstC).trim().toUpperCase();
     const patient = db.patients.find((x) => x.id === p);
     const culture = db.cultures.find((x) => x.id === c);
     if (!patient || !culture || db.patients[culture.p]?.id !== p) {
@@ -57,10 +67,27 @@ export function LoginScreen() {
           <p className="mb-4 text-sm text-muted-foreground">{fi ? r.dFi : r.dEn}</p>
           <form onSubmit={submit} className="space-y-3">
             {tab === "patient" ? (<>
-              <label className="block text-xs font-medium">{fi ? "Potilastunnus" : "Patient ID"}
-                <input className={input} value={pid ?? firstP} onChange={(e) => setPid(e.target.value)} /></label>
+              <div className="relative">
+                <label className="block text-xs font-medium">{fi ? "Hae potilastunnus" : "Search patient ID"}
+                  <div className="relative">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input className={`${input} pl-9`} placeholder={fi ? "esim. P000123" : "e.g. P000123"} value={pid ?? firstP} autoComplete="off"
+                      onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 150)}
+                      onChange={(e) => { setPid(e.target.value); setOpen(true); }} />
+                  </div></label>
+                {open && suggestions.length > 0 && (
+                  <ul className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-border bg-card py-1 shadow-card">
+                    {suggestions.map((s) => (
+                      <li key={s.id}><button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => pick(s.id)}
+                        className="flex w-full items-center justify-between px-3 py-1.5 text-left text-sm hover:bg-secondary">
+                        <span className="font-mono">{s.id}</span><span className="text-xs text-muted-foreground">{s.sex} · {s.birth} · {s.area}</span>
+                      </button></li>))}
+                  </ul>)}
+              </div>
               <label className="block text-xs font-medium">{fi ? "Näytetunnus (culture ID)" : "Culture ID"}
                 <input className={input} value={cid ?? firstC} onChange={(e) => setCid(e.target.value)} /></label>
+              <label className="block text-xs font-medium">{fi ? "Salasana" : "Password"}
+                <input className={input} type="password" placeholder={fi ? "Kirjoita mikä tahansa salasana" : "Type any password"} value={pw} onChange={(e) => setPw(e.target.value)} /></label>
             </>) : (<>
               <label className="block text-xs font-medium">{fi ? "Käyttäjätunnus" : "Username"}
                 <input className={input} value={r.user} readOnly /></label>
