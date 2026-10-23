@@ -32,7 +32,7 @@ export function LoginScreen() {
     const p = (pid ?? firstP).trim(), c = (cid ?? firstC).trim();
     const patient = db.patients.find((x) => x.id === p);
     const culture = db.cultures.find((x) => x.id === c);
-    if (!patient || !culture || culture.pid !== p) {
+    if (!patient || !culture || db.patients[culture.p]?.id !== p) {
       setErr(fi ? "Potilastunnus ja näytetunnus eivät täsmää." : "Patient ID and culture ID do not match.");
       return;
     }
